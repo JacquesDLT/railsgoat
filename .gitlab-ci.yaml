@@ -1,0 +1,17 @@
+image: docker:latest
+
+services:
+  - docker:dind
+
+stages:
+  - build
+ 
+sast:
+  stage: build
+  image: node:alpine3.10
+  script:
+    - docker run -v "$(pwd)":/code presidentbeef/brakeman --color -o /dev/stdout -o brakeman-output.json
+  artifacts:
+    paths: [brakeman-output.json]
+    when: always # Run on every commit on every branch
+    expire_in: one week
